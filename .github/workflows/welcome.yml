@@ -15,7 +15,16 @@ jobs:
     name: Post welcome comment
     runs-on: ubuntu-latest
 steps:
-      - run: gh pr comment "$PR_URL" --body "Welcome to the repository!"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+  - name: Install GitHub CLI
+    uses: actions/setup-gh@v4
+
+  - name: Authenticate gh
+    run: echo "${GITHUB_TOKEN}" | gh auth login --with-token
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  - name: Post comment with gh
+    run: gh pr comment "$PR_URL" --body "Welcome to the repository!"
+    env:
+      PR_URL: ${{ github.event.pull_request.html_url }}
+
