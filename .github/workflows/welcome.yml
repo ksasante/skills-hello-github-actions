@@ -15,15 +15,12 @@ jobs:
     name: Post welcome comment
     runs-on: ubuntu-latest
 steps:
-       name: Install GitHub CLI
-        uses: actions/setup-gh@v4
-
-       name: Authenticate gh CLI
-        run: echo "${GITHUB_TOKEN}" | gh auth login --with-token
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      name: Post welcome comment
-        run: gh pr comment "$PR_URL" --body "Welcome to the repository!"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
+      uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: "Welcome to the repository!"
+            })
